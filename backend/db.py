@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel import Session, SQLModel, create_engine
-from models.song import Song
+from models import models
 import os
 
 env = dict(os.environ)
