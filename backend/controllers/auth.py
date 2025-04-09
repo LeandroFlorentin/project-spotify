@@ -17,6 +17,14 @@ async def login(body):
             headers=None,
             data=None,
         )
+        token_spotify = await get_token_spotify()
+        new_token = Token(
+            token=token_spotify["access_token"], expired_in=token_spotify["expires_in"]
+        )
+        session = get_session()
+        session.add(new_token)
+        session.commit()
+        session.refresh(new_token)
         return response
     except HTTPException as err:
         raise HTTPException(
