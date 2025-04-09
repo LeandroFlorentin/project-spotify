@@ -11,7 +11,7 @@ engine = create_engine(env["DATABASE_URL"])
 def get_session():
     try:
         with Session(engine) as session:
-            yield session
+            return session
     except Exception as e:
         print("Error accediendo a la base de datos:", e)
         raise HTTPException(
