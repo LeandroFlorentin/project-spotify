@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from . import songs, auth
+from . import songs, auth, users
 
-router_modules = [songs, auth]
+router_modules = [songs, auth, users]
 
 main_router = APIRouter()
 for router_module in router_modules:

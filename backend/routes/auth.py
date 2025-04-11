@@ -1,7 +1,7 @@
 from fastapi import APIRouter, responses
 from pydantic import BaseModel
 from controllers.auth import login
-import json
+from typing import Dict
 
 json_response = responses.JSONResponse
 
@@ -13,10 +13,23 @@ class BodyLogin(BaseModel):
     password: str
 
 
+class Data(BaseModel):
+    id: int
+    username: str
+    email: str
+    role: str
+    access_token: str
+
+
+class Response(BaseModel):
+    status: int
+    message: str
+    data: Data
+
+
 @router.post("/login")
-async def auth_route(body: BodyLogin):
+async def auth_route(body: BodyLogin) -> Response:
     body_dic = body.model_dump()
-    body_json = json.dumps(body_dic)
     return json_response(
-        content=await login(body_json), status_code=200, media_type="application/json"
+        content=await login(body_dic), status_code=200, media_type="application/json"
     )

@@ -20,4 +20,6 @@ def get_session():
 
 
 def create_table():
+    if env["ENVIROMENT"] == "TEST":
+        SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)

@@ -1,22 +1,30 @@
-from typing import Literal
+from typing import Literal, Optional
 import httpx
 
 
 async def http(
     url: str,
     method: Literal["get", "post", "put", "delete"],
-    body: any,
-    params: any,
-    headers: any,
-    data: any,
+    body: Optional[dict] = None,
+    params: Optional[dict] = None,
+    headers: Optional[dict] = None,
+    data: Optional[dict] = None,
 ):
     try:
         async with httpx.AsyncClient() as client:
+            method__not_exist = method.lower() not in ["get", "post", "put", "delete"]
+            if method__not_exist:
+                raise ValueError(f"Método HTTP no soportado: {method}")
             client_method = getattr(client, method.lower())
-            response = await client_method(
-                url, json=body, params=params, headers=headers, data=data
-            )
-            print("RESPUESTA", response)
+            response = None
+
+            if method.lower() in ["post", "put", "delete"]:
+                response = await client_method(
+                    url, json=body, params=params, headers=headers, data=data
+                )
+            else:
+                response = await client_method(url, params=params, headers=headers)
+
             return response.json()
     except httpx.HTTPError as exc:
         print(f"HTTP Exception for {exc.request.url} - {exc}")
