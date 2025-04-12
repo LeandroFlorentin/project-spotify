@@ -18,7 +18,7 @@ async def http(
             client_method = getattr(client, method.lower())
             response = None
 
-            if method.lower() in ["post", "put", "delete"]:
+            if method.lower() in ["post", "put"]:
                 response = await client_method(
                     url, json=body, params=params, headers=headers, data=data
                 )

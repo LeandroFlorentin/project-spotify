@@ -1,13 +1,13 @@
 from fastapi import APIRouter, responses
 from pydantic import BaseModel
-from typing import List
-from controllers.users import create_user, get_user
+from typing import List, Dict
+from controllers.users import create_user, get_user, update_user, delete_user
 from utils.bearer_token import get_bearer_token
 
 router = APIRouter(prefix="/users")
 
 
-class BodyCreate(BaseModel):
+class BodyUser(BaseModel):
     username: str
     email: str
     password: str
@@ -44,6 +44,12 @@ class Response_get(BaseModel):
     data: Data_get
 
 
+class Generic_response(BaseModel):
+    status: int
+    message: str
+    data: Dict = {}
+
+
 @router.get("/me")
 async def route_me(id: int, token: str = get_bearer_token()) -> Response_get:
     return responses.JSONResponse(
@@ -55,11 +61,32 @@ async def route_me(id: int, token: str = get_bearer_token()) -> Response_get:
 
 @router.post("/create")
 async def route_create(
-    body: BodyCreate, token: str = get_bearer_token()
+    body: BodyUser, token: str = get_bearer_token()
 ) -> Response_create:
     body_dict = body.model_dump()
     return responses.JSONResponse(
         content=await create_user(body_dict, token),
         status_code=200,
         media_type="application/json",
+    )
+
+
+@router.put("/update")
+async def route_update(
+    body: BodyUser, id: int, token: str = get_bearer_token()
+) -> Generic_response:
+    body_dict = body.model_dump()
+    return responses.JSONResponse(
+        content=await update_user(body_dict, id, token),
+        status_code=200,
+        media_type="application/json",
+    )
+
+
+@router.delete("/delete")
+async def route_delete(id: int, token: str = get_bearer_token()) -> Generic_response:
+    return responses.JSONResponse(
+        content=await delete_user(id, token),
+        status_code=200,
+        media_type="aplication/json",
     )

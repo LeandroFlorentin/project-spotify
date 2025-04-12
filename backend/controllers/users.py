@@ -26,3 +26,24 @@ async def get_user(id, bearer_token):
         headers={"Authorization": bearer_token},
     )
     return user
+
+
+async def update_user(body, id, bearer_token):
+    updated_user = await http(
+        url=url_microservice_auth + "users/update",
+        method="put",
+        params={"id": id},
+        headers={"Authorization": bearer_token},
+        body=body,
+    )
+    return updated_user
+
+
+async def delete_user(id, bearer_token):
+    deleted_user = await http(
+        url=url_microservice_auth + "users/delete",
+        method="delete",
+        params={"id": id},
+        headers={"Authorization": bearer_token},
+    )
+    return deleted_user
