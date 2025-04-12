@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from db import get_session
 from fastapi import HTTPException
 from sqlalchemy import select
+from utils.jwt import decoded_token
 import os
 
 env = dict(os.environ)
