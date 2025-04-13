@@ -1,3 +1,5 @@
-from . import song, token
+from .token import Token
+from .song import Song
+from .favourites import Favourites
 
-models = [song.Song, token.Token]
+models = [Token, Song, Favourites]

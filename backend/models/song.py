@@ -8,6 +8,7 @@ def current_datetime():
 
 class Song(SQLModel, table=True):
     idsong: int | None = Field(default=None, primary_key=True)
+    idspotify: str = Field(index=True)
     title: str = Field(index=True)
     artist: str = Field(index=True)
     album: str = Field(index=True)

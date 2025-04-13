@@ -22,7 +22,7 @@ def get_db_token_spotify(call="routes"):
     token_list = [
         {
             "id": t.id,
-            "token": t.token,
+            "access_token": t.token,
             "expires_in": t.expires_in.isoformat() if t.expires_in else None,
         }
         for t in get_tokens_spotify

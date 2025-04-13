@@ -5,15 +5,22 @@ import os
 
 env = dict(os.environ)
 
+url_api_spotify = env["URL_API_SPOTIFY"]
 
-async def get_songs(q, type, limit):
-    query = f"?q={q}&type={type}&limit={limit}"
-    token_db_spotify = get_db_token_spotify("routes")
-    token_spotify = token_db_spotify[0]["token"]
-    headers = {"Authorization": f"Bearer {token_spotify}"}
+
+async def get_songs(q, limit, token):
+    url = url_api_spotify + f"search?q={q}&type=track&limit={limit}"
+    headers = {"Authorization": f"Bearer {token}"}
     songs = await http(
-        env["URL_API_SPOTIFY"] + f"search{query}",
+        url=url,
         method="get",
         headers=headers,
     )
     return songs
+
+
+async def get_song(id, token):
+    url = url_api_spotify + f"tracks/{id}"
+    headers = {"Authorization": f"Bearer {token}"}
+    song = await http(url=url, method="get", headers=headers)
+    return song
