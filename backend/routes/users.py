@@ -1,57 +1,16 @@
-from fastapi import APIRouter, responses
-from pydantic import BaseModel
-from typing import List, Dict
+from fastapi import APIRouter, responses, Depends, Request
 from controllers.users import create_user, get_user, update_user, delete_user
-from utils.bearer_token import get_bearer_token
+from utils.tokens import get_bearer_token
+from types_routes.users import Response_get, Response_create, Generic_response, BodyUser
+from utils.swagger import show_bearer_in_swagger
 
 router = APIRouter(prefix="/users")
 
 
-class BodyUser(BaseModel):
-    username: str
-    email: str
-    password: str
-    role: list[str]
-
-
-class UserData(BaseModel):
-    id: int
-    username: str
-    email: str
-    role: List[str]
-    disabled: int
-    access_token: str
-
-
-class Response_create(BaseModel):
-    status: int
-    message: str
-    data: UserData
-
-
-class Data_get(BaseModel):
-    id: int
-    username: str
-    email: str
-    role: List[str]
-    createdAt: str
-    updatedAt: str
-
-
-class Response_get(BaseModel):
-    status: int
-    message: str
-    data: Data_get
-
-
-class Generic_response(BaseModel):
-    status: int
-    message: str
-    data: Dict = {}
-
-
-@router.get("/me")
-async def route_me(id: int, token: str = get_bearer_token()) -> Response_get:
+@router.get("/me", dependencies=[Depends(show_bearer_in_swagger)])
+async def route_me(id: int, request: Request) -> Response_get:
+    token = get_bearer_token(request=request)
+    print("TUKEN", token)
     return responses.JSONResponse(
         content=await get_user(id, token),
         status_code=200,
@@ -59,10 +18,9 @@ async def route_me(id: int, token: str = get_bearer_token()) -> Response_get:
     )
 
 
-@router.post("/create")
-async def route_create(
-    body: BodyUser, token: str = get_bearer_token()
-) -> Response_create:
+@router.post("/create", dependencies=[Depends(show_bearer_in_swagger)])
+async def route_create(body: BodyUser, request: Request) -> Response_create:
+    token = get_bearer_token(request=request)
     body_dict = body.model_dump()
     return responses.JSONResponse(
         content=await create_user(body_dict, token),
@@ -71,10 +29,9 @@ async def route_create(
     )
 
 
-@router.put("/update")
-async def route_update(
-    body: BodyUser, id: int, token: str = get_bearer_token()
-) -> Generic_response:
+@router.put("/update", dependencies=[Depends(show_bearer_in_swagger)])
+async def route_update(body: BodyUser, request: Request) -> Generic_response:
+    token = get_bearer_token(request=request)
     body_dict = body.model_dump()
     return responses.JSONResponse(
         content=await update_user(body_dict, id, token),
@@ -83,8 +40,9 @@ async def route_update(
     )
 
 
-@router.delete("/delete")
-async def route_delete(id: int, token: str = get_bearer_token()) -> Generic_response:
+@router.delete("/delete", dependencies=[Depends(show_bearer_in_swagger)])
+async def route_delete(id: int, request: Request) -> Generic_response:
+    token = get_bearer_token(request=request)
     return responses.JSONResponse(
         content=await delete_user(id, token),
         status_code=200,

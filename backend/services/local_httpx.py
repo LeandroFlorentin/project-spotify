@@ -1,4 +1,5 @@
 from typing import Literal, Optional
+from fastapi import HTTPException
 import httpx
 
 
@@ -28,4 +29,4 @@ async def http(
             return response.json()
     except httpx.HTTPError as exc:
         print(f"HTTP Exception for {exc.request.url} - {exc}")
-        raise
+        raise HTTPException(500, exc)

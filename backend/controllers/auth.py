@@ -3,8 +3,7 @@ from models.token import Token
 from datetime import datetime, timedelta
 from db import get_session
 from fastapi import HTTPException
-from sqlalchemy import select
-from utils.jwt import decoded_token
+from utils.tokens import get_db_token_spotify
 import os
 
 env = dict(os.environ)
@@ -21,9 +20,10 @@ async def login(body):
             headers=None,
             data=None,
         )
-        token_get = session.exec(select(Token)).scalars().all()
+        token_get = get_db_token_spotify("login")
         if len(token_get) == 0:
             token_spotify = await get_token_spotify()
+            print(token_spotify["expires_in"])
             new_token = Token(
                 token=token_spotify["access_token"],
                 expires_in=datetime.now() + timedelta(token_spotify["expires_in"]),
@@ -45,6 +45,10 @@ async def login(body):
                 session.refresh(token_get[0])
         return response
     except HTTPException as err:
+        raise err
+    except KeyError as err:
         raise HTTPException(
-            status_code=err.response.status_code, detail=err.response.text
+            status_code=500, detail=f"Missing environment variable: {err}"
         )
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=str(err))
