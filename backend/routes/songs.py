@@ -5,12 +5,14 @@ from utils.swagger import show_bearer_in_swagger
 from middlewares.jwt import decode_token_dependency
 from middlewares.spotify_token import verify_spotify_token
 
-router = APIRouter(prefix="/songs")
+router = APIRouter(prefix="/songs", tags=["Songs"])
 
 
 @router.get(
     "/get_songs",
     dependencies=[Depends(show_bearer_in_swagger)],
+    summary="Get songs",
+    description="Get songs from API Spotify",
 )
 async def route_songs(
     q: str,
@@ -25,7 +27,12 @@ async def route_songs(
     )
 
 
-@router.get("/get_song", dependencies=[Depends(show_bearer_in_swagger)])
+@router.get(
+    "/get_song",
+    dependencies=[Depends(show_bearer_in_swagger)],
+    summary="Get song",
+    description="Get song by id from API spotify",
+)
 async def router_song(
     id: str,
     token_spotify=Depends(verify_spotify_token),

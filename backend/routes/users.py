@@ -4,13 +4,14 @@ from utils.tokens import get_bearer_token
 from types_routes.users import Response_get, Response_create, Generic_response, BodyUser
 from utils.swagger import show_bearer_in_swagger
 
-router = APIRouter(prefix="/users")
+router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/me", dependencies=[Depends(show_bearer_in_swagger)])
+@router.get(
+    "/me", dependencies=[Depends(show_bearer_in_swagger)], summary="Get my user"
+)
 async def route_me(id: int, request: Request) -> Response_get:
     token = get_bearer_token(request=request)
-    print("TUKEN", token)
     return responses.JSONResponse(
         content=await get_user(id, token),
         status_code=200,
@@ -18,7 +19,9 @@ async def route_me(id: int, request: Request) -> Response_get:
     )
 
 
-@router.post("/create", dependencies=[Depends(show_bearer_in_swagger)])
+@router.post(
+    "/create", dependencies=[Depends(show_bearer_in_swagger)], summary="Create user"
+)
 async def route_create(body: BodyUser, request: Request) -> Response_create:
     token = get_bearer_token(request=request)
     body_dict = body.model_dump()
@@ -29,7 +32,9 @@ async def route_create(body: BodyUser, request: Request) -> Response_create:
     )
 
 
-@router.put("/update", dependencies=[Depends(show_bearer_in_swagger)])
+@router.put(
+    "/update", dependencies=[Depends(show_bearer_in_swagger)], summary="Update user"
+)
 async def route_update(body: BodyUser, request: Request) -> Generic_response:
     token = get_bearer_token(request=request)
     body_dict = body.model_dump()
@@ -40,7 +45,9 @@ async def route_update(body: BodyUser, request: Request) -> Generic_response:
     )
 
 
-@router.delete("/delete", dependencies=[Depends(show_bearer_in_swagger)])
+@router.delete(
+    "/delete", dependencies=[Depends(show_bearer_in_swagger)], summary="Delete user"
+)
 async def route_delete(id: int, request: Request) -> Generic_response:
     token = get_bearer_token(request=request)
     return responses.JSONResponse(

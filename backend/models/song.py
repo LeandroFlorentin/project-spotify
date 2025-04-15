@@ -1,4 +1,5 @@
 from sqlmodel import SQLModel, Field
+from sqlalchemy import Column, String
 from datetime import datetime
 
 
@@ -12,8 +13,6 @@ class Song(SQLModel, table=True):
     title: str = Field(index=True)
     artist: str = Field(index=True)
     album: str = Field(index=True)
-    duration: int = Field(index=True)
-    genre: str = Field(index=True)
     year: int = Field(index=True)
     url_image: str = Field(index=True)
     created_at: str = Field(default_factory=current_datetime)
