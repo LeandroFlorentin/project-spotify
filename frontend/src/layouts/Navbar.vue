@@ -2,26 +2,38 @@
     import { RouterView, useRouter } from 'vue-router';
     import { Button, Input } from '../components/index.js';
     import { InputGroup,InputGroupAddon } from 'primevue';
-    import { ref, watch } from 'vue';
+    import { ref } from 'vue';
+    import debounce from 'lodash.debounce'
+    import { useStore } from 'vuex'
+
+    const {VITE_APP_URL_API} = import.meta.env
     
     const router = useRouter();
-    const search = ref({
-        name:"",
-        password:""
-    });
+    const store = useStore();
+    const search = ref("");
     
     const goToHome = () => {
         router.push('/home');
     };
 
+    const searchSong = async () => {
+        try {
+            await store.dispatch('fetchSongs', { 
+                query: search.value,
+                apiUrl: VITE_APP_URL_API
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    const debouncedProcessInput = debounce(searchSong, 2000)
+
     const handleInput = (event) => {
-        const {name,value} = event.target;
-        search.value[name] = value
+        const {value} = event.target;
+        search.value = value;
+        debouncedProcessInput()
     };
-    
-    watch(search.value, (newValue) => {
-        console.log('Nuevo valor:', newValue);
-    });
 </script>
 
 <template>
@@ -44,10 +56,9 @@
                     <i class="pi pi-search" style="font-size: 1.4rem;"></i>
                 </InputGroupAddon>
                 <Input 
-                    name="name"
-                    :value="search.name"
-                    :onInput="handleInput"
+                    :value="search"
                     placeholder="Que cancion quieres buscar?"
+                    :onInput="handleInput"
                     rounded
                     className="search-input"
                 />
