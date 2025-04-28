@@ -15,6 +15,7 @@ async def login(body):
             headers=None,
             data=None,
         )
+        print("RESPONSEEEE", response)
         return response
     except HTTPException as err:
         raise HTTPException(status_code=500, detail=f"Error in authentication: {err}")

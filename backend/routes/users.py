@@ -25,9 +25,10 @@ async def route_me(id: int, request: Request) -> Response_get:
 async def route_create(body: BodyUser, request: Request) -> Response_create:
     token = get_bearer_token(request=request)
     body_dict = body.model_dump()
+    result = await create_user(body_dict, token)
     return responses.JSONResponse(
-        content=await create_user(body_dict, token),
-        status_code=200,
+        content=result,
+        status_code=result["status"],
         media_type="application/json",
     )
 
@@ -38,9 +39,10 @@ async def route_create(body: BodyUser, request: Request) -> Response_create:
 async def route_update(body: BodyUser, request: Request) -> Generic_response:
     token = get_bearer_token(request=request)
     body_dict = body.model_dump()
+    result = await update_user(body_dict, id, token)
     return responses.JSONResponse(
-        content=await update_user(body_dict, id, token),
-        status_code=200,
+        content=result,
+        status_code=result["status"],
         media_type="application/json",
     )
 
@@ -50,8 +52,9 @@ async def route_update(body: BodyUser, request: Request) -> Generic_response:
 )
 async def route_delete(id: int, request: Request) -> Generic_response:
     token = get_bearer_token(request=request)
+    result = await delete_user(id, token)
     return responses.JSONResponse(
-        content=await delete_user(id, token),
-        status_code=200,
+        content=result,
+        status_code=result["status"],
         media_type="aplication/json",
     )

@@ -21,7 +21,7 @@ async def auth_route(body: BodyLogin) -> Response:
 
         return json_response(
             content=result,
-            status_code=200,
+            status_code=result["status"],
             media_type="application/json",
         )
     except Exception as e:
