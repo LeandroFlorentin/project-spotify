@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../pages/Home.vue';
-import Login from '../pages/Login.vue';
+import { Home, Login, Register } from '../pages';
 import Navbar from '../layouts/Navbar.vue';
 
 const router = createRouter({
@@ -9,12 +8,13 @@ const router = createRouter({
     {
       path: '/',
       name: '',
-      component: Login,
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login,
+      component: Navbar,
+      children: [
+        {
+          path: '/',
+          component: Home,
+        },
+      ],
     },
     {
       path: '/home',
@@ -26,6 +26,16 @@ const router = createRouter({
           component: Home,
         },
       ],
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Register,
     },
   ],
 });

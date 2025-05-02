@@ -1,12 +1,12 @@
 <script setup>
-import {useToast,Toast,Message,InputText,Password} from "primevue";
+import {Toast,Message} from "primevue";
 import { useRouter } from "vue-router";
 import { Form } from "@primevue/forms";
-import { reactive,ref,onUnmounted } from "vue";
-import { Button } from "../components/index";
+import { reactive,ref,onUnmounted,onMounted } from "vue";
+import { Button,Input,Container } from "../components/index";
+import {Inputs} from "../data"
 import http from "../utils/http.js"
 
-const toast = useToast();
 const router = useRouter()
 const initialValues = reactive({
     username:"",
@@ -59,62 +59,31 @@ onUnmounted(() => {
     message.value = ""
 })
 
+onMounted(()=>{
+    const token = localStorage.getItem("token");
+    if(token){
+        router.push("/home")
+    }
+})
+
 </script>
 <template>
-    <div class="wrapper">
-        <div class="login-container surface-0 border-round-xl shadow-4 flex justify-content-center">
+        <Container>
             <Toast />
             <Form v-slot="$form" :initialValues :resolver @submit="onFormSubmit" class="p-4 sm:w-10 md:w-8 lg:w-6 h-full flex flex-column justify-content-center">
                 <div class="grid gap-3">
-                    <div class="w-full flex flex-column gap-2">
-                        <label for="username">Email o nombre de usuario</label>
-                        <InputText name="username" type="text" placeholder="Usuario" class="w-full" @input="onChange"/>
-                        <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">
-                            <i class="pi pi-exclamation-circle"></i> {{ $form.username.error?.message }}
-                        </Message>
-                    </div>
-                    <div class="w-full flex flex-column gap-2">
-                        <label for="password">Contraseña</label>
-                        <Password @input="onChange" :feedback="false" name="password" type="password" placeholder="Contraseña" class="w-full" :toggleMask="true"/>
-                        <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">
-                            <i class="pi pi-exclamation-circle"></i> {{ $form.password.error?.message }}
-                        </Message>
+
+                    <div v-for="(input,index) in Inputs" :key="index" class="w-full flex flex-column gap-2">
+                        <Input :form="$form" :label=input.label :name=input.name :type=input.type :placeholder=input.placeholder @input="onChange" :password=input.password />
                     </div>
                     <Message v-if="message" severity="error" size="small" variant="simple">{{ message }}</Message>
                     <div class="w-full">
                         <Button rounded type="submit" severity="success" class="w-full font-bold">Iniciar sesión</Button>
                     </div>
                 </div>
+                <div class="w-full flex justify-content-center">
+                    <p>No tenes una cuenta? <a class="text-primary" href="/register">Registrate</a></p>
+                </div>
             </Form>
-        </div>
-    </div>
+        </Container>
 </template>
-<style scoped>
-.wrapper{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100vh;
-    background-color: black;
-}
-
-.login-container {
-    width: 80%;
-    height: 100vh;
-    max-width: 700px;
-    min-width: 300px;
-}
-
-:deep(.p-password) {
-    width: 100%;
-}
-
-:deep(.p-password-input) {
-    width: 100% !important;
-}
-
-:deep(.p-password .p-inputtext) {
-    width: 100%;
-}
-</style>

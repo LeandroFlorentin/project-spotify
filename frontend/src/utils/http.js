@@ -10,6 +10,19 @@ const instance = axios.create({
   },
 });
 
+instance.interceptors.response.use(
+  (config) => {
+    return config;
+  },
+  (error) => {
+    if (error?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default async function http(method, url, headers = {}, body = null, rawResponse = false, throwOnError = true) {
   const options = {
     method,
@@ -25,12 +38,8 @@ export default async function http(method, url, headers = {}, body = null, rawRe
 
   try {
     const response = await instance(options);
-
-    if (response.status < 200 || response.status >= 300) {
-      throw new Error(`Error ${response.status}: ${response.statusText} - ${JSON.stringify(response.data)}`);
-    }
-
-    return response.data;
+    console.log('RESPONSE', response);
+    return response?.data;
   } catch (error) {
     console.error('Hubo un problema en la petición:', error.message);
 

@@ -146,6 +146,19 @@
     align-items: center !important;
 }
 
+:deep(.p-inputtext){
+    border:1px solid transparent;
+    background-color: transparent;
+}
+
+:deep(.p-inputtext:focus){
+    border:1px solid transparent !important;
+}
+
+:deep(.p-inputtext:hover){
+    border:1px solid transparent !important;
+}
+
 .pointer {
     cursor: pointer;
 }
