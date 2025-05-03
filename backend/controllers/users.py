@@ -6,13 +6,13 @@ env = dict(os.environ)
 url_microservice_auth = env["URL_MICROSERVICE_AUTH"]
 
 
-async def create_user(body, bearer_token):
+async def create_user(body):
     user = await http(
         url=url_microservice_auth + "users/create",
         method="post",
         body=body,
         params=None,
-        headers={"Authorization": bearer_token},
+        headers={},
         data=None,
     )
     return user

@@ -19,13 +19,10 @@ async def route_me(id: int, request: Request) -> Response_get:
     )
 
 
-@router.post(
-    "/create", dependencies=[Depends(show_bearer_in_swagger)], summary="Create user"
-)
-async def route_create(body: BodyUser, request: Request) -> Response_create:
-    token = get_bearer_token(request=request)
+@router.post("/create", summary="Create user")
+async def route_create(body: BodyUser) -> Response_create:
     body_dict = body.model_dump()
-    result = await create_user(body_dict, token)
+    result = await create_user(body_dict)
     return responses.JSONResponse(
         content=result,
         status_code=result["status"],

@@ -3,8 +3,8 @@ import {Toast,Message} from "primevue";
 import { useRouter } from "vue-router";
 import { Form } from "@primevue/forms";
 import { reactive,ref,onUnmounted,onMounted } from "vue";
-import { Button,Input,Container } from "../components/index";
-import {Inputs} from "../data"
+import { Button,Input,Container } from "../components";
+import {Inputs} from "../data/Login.js"
 import http from "../utils/http.js"
 
 const router = useRouter()
@@ -52,6 +52,8 @@ const onFormSubmit = async ({valid}) =>{
             }
             throw error;
         }
+    }else{
+        throw "El formulario no es valido."
     }
 }
 
