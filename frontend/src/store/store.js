@@ -4,10 +4,14 @@ import http from '../utils/http';
 export default createStore({
   state: {
     songs: {},
+    loading: false,
   },
   mutations: {
     setSongs(state, songs) {
       state.songs = songs;
+    },
+    setLoading(state, value) {
+      state.loading = value;
     },
   },
   actions: {
@@ -24,6 +28,9 @@ export default createStore({
       } catch (error) {
         throw error;
       }
+    },
+    setLoading({ commit }, value) {
+      commit('setLoading', value);
     },
   },
 });

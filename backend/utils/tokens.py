@@ -13,19 +13,10 @@ def get_bearer_token(request: Request):
     return token
 
 
-def get_db_token_spotify(call="routes"):
-    session = get_session()
+def get_db_token_spotify(call="routes", session=None):
     get_tokens_spotify = session.exec(select(Token)).scalars().all()
     if call != "login":
         if len(get_tokens_spotify) == 0:
             raise HTTPException(404, "No spotify tokens found in database")
-    token_list = [
-        {
-            "id": t.id,
-            "access_token": t.token,
-            "expires_in": t.expires_in.isoformat() if t.expires_in else None,
-        }
-        for t in get_tokens_spotify
-    ]
 
-    return token_list
+    return get_tokens_spotify

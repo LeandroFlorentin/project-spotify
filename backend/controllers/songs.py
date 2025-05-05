@@ -2,6 +2,7 @@ from utils.tokens import get_db_token_spotify
 from services import http
 from fastapi import HTTPException
 import os
+import json
 
 env = dict(os.environ)
 
@@ -16,6 +17,18 @@ async def get_songs(q, limit, token):
         method="get",
         headers=headers,
     )
+    new_format_songs = []
+    for song in songs["tracks"]["items"]:
+        new_format_songs.append(
+            {
+                "idspotify": song["id"],
+                "title": song["name"],
+                "artist": song["artists"],
+                "album": song["album"],
+                "duration": round(song["duration_ms"] / 1000 / 60, 2),
+            }
+        )
+    songs["tracks"]["items"] = new_format_songs
     return songs
 
 

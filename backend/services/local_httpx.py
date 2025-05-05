@@ -11,6 +11,7 @@ async def http(
     headers: Optional[dict] = None,
     data: Optional[dict] = None,
 ):
+    print("Execute HTTP Request:", url, method, body, params, headers, data)
     try:
         async with httpx.AsyncClient() as client:
             method__not_exist = method.lower() not in ["get", "post", "put", "delete"]
@@ -20,7 +21,6 @@ async def http(
             response = None
 
             if method.lower() in ["post", "put"]:
-                print("UEREELE", url)
                 response = await client_method(
                     url, json=body, params=params, headers=headers, data=data
                 )

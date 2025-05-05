@@ -1,61 +1,87 @@
 <script setup>
-    import { RouterView, useRouter } from 'vue-router';
-    import { Button, Input } from '../components/index.js';
-    import { InputGroup,InputGroupAddon } from 'primevue';
-    import { ref } from 'vue';
-    import debounce from 'lodash.debounce'
-    import { useStore } from 'vuex'
+import { RouterView, useRouter } from 'vue-router';
+import { Button, Input, Menu } from '../components/index.js';
+import { InputGroup, InputGroupAddon } from 'primevue';
+import { ref, watch } from 'vue';
+import debounce from 'lodash.debounce';
+import { useStore } from 'vuex';
 
-    const {VITE_APP_URL_API} = import.meta.env
-    
-    const router = useRouter();
-    const store = useStore();
-    const search = ref("");
-    
-    const goToHome = () => {
-        router.push('/home');
-    };
+const { VITE_APP_URL_API } = import.meta.env;
 
-    const searchSong = async () => {
-        try {
-            await store.dispatch('fetchSongs', { 
-                query: search.value,
-                apiUrl: VITE_APP_URL_API
-            });
-        } catch (error) {
-            throw error;
-        }
+const menu = ref(null);
+
+const items = ref([
+    {
+        items: [
+            {
+                label: 'Mi perfil',
+                icon: 'pi pi-user',
+                command: () => {
+                    router.push("/mi_perfil");
+                }
+            },
+            {
+                label: 'Cerrar sesión',
+                icon: 'pi pi-sign-out',
+                command: () => {
+                    localStorage.removeItem("token");
+                    router.push("/login");
+                }
+            }
+        ]
     }
+]);
 
-    const debouncedProcessInput = debounce(searchSong, 2000)
+const router = useRouter();
+const store = useStore();
+const search = ref("");
 
-    const handleInput = (event) => {
-        const {value} = event.target;
-        search.value = value;
-        debouncedProcessInput()
-    };
+const goToHome = () => {
+    router.push('/home');
+};
+
+const searchSong = async () => {
+    try {
+        await store.dispatch('fetchSongs', {
+            query: search.value,
+            apiUrl: VITE_APP_URL_API
+        });
+    } catch (error) {
+        throw error;
+    }
+};
+
+const debouncedProcessInput = debounce(searchSong, 2000);
+
+const handleInput = (event) => {
+    const { value } = event.target;
+    search.value = value;
+    debouncedProcessInput();
+};
+
+const toggle = (event) => menu.value?.toggle?.(event);
 </script>
 
 <template>
-    <div class="navbar grid">
-        <div class="col-2 flex align-items-center gap-2 justify-content-center">
+    <div class="flex justify-content-between navbar grid">
+        <div class="col-3 md:col-3 lg:col-2 flex align-items-center gap-2 justify-content-center">
             <div @click="goToHome" class="pointer">
                 <img alt="spotify" src="../assets/spotify_white.png" width="42" height="42"/>
             </div>
-            <Button 
-            icon="pi pi-home" 
-            text
-            rounded
-            className="btn-home" 
-            @click="goToHome"
-        />
+            <Button
+                icon="pi pi-home"
+                text
+                rounded
+                className="btn-home"
+                @click="goToHome"
+            />
         </div>
-        <div class="col-4 flex pt-2">
+        <div class="col-6 md:col-6 lg:col-4 flex pt-2">
             <InputGroup class="search-group">
                 <InputGroupAddon class="search-addon">
                     <i class="pi pi-search" style="font-size: 1.4rem;"></i>
                 </InputGroupAddon>
-                <Input 
+                <Input
                     :value="search"
                     placeholder="Que cancion quieres buscar?"
                     :onInput="handleInput"
@@ -63,6 +89,16 @@
                     className="search-input"
                 />
             </InputGroup>
+        </div>
+        <div class="col-3 md:col-3 lg:col-3 flex justify-content-end">
+            <Button
+                type="button"
+                icon="pi pi-align-justify"
+                @click="toggle($event)"
+                aria-haspopup="true"
+                aria-controls="overlay_menu"
+            />
+            <Menu ref="menu" id="overlay_menu" :model="items" popup="true" />
         </div>
     </div>
     <RouterView />

@@ -11,7 +11,7 @@ defineProps({
         validator: (value) => ["right", "top", "bottom", "left"].includes(value)
     },
     className: String,
-    loading: String,
+    loading: Boolean,
     click: Function,
     as: String,
     href: String,
@@ -25,7 +25,12 @@ defineProps({
     rounded: Boolean,
     text: Boolean,
     size: String,
-    style:Object
+    style:{
+        type:Object,
+        default: () => ({ position: 'relative' })
+    },
+    "aria-haspopup":Boolean,
+    "aria-controls":String
 })
 </script>
 
@@ -47,6 +52,8 @@ defineProps({
         :text="text"
         :class="className"
         :size="size"
+        :aria-haspopup="['aria-haspopup']"
+        :aria-controls="['aria-controls']"
     >
         <slot />
     </Button>

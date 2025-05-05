@@ -20,8 +20,8 @@ onMounted(async () => {
     <div id="app" class="wrapper">
       <div v-if="songs.tracks" class="songs-container">
         <div v-for="song in songs.tracks.items" :key="song.id" class="song-item">
-          <div class="song-name">{{ song.name }}</div>
-          <div class="song-artist">{{ song.artists[0].name }}</div>
+          <div class="song-name">{{ song.title }}</div>
+          <div class="song-artist">{{ song.artist[0].name }}</div>
         </div>
       </div>
       <div v-else>

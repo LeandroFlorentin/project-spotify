@@ -2,11 +2,15 @@
 import {Toast,Message} from "primevue";
 import { useRouter } from "vue-router";
 import { Form } from "@primevue/forms";
-import { reactive,ref,onUnmounted,onMounted } from "vue";
-import { Button,Input,Container } from "../components";
+import { reactive,ref,onUnmounted,onMounted,computed } from "vue";
+import { Button,Input,Container} from "../components";
 import {Inputs} from "../data/Login.js"
 import http from "../utils/http.js"
+import { useStore } from "vuex";
 
+const store = useStore();
+
+const loading = computed(()=>store.state.loading) 
 const router = useRouter()
 const initialValues = reactive({
     username:"",
@@ -74,13 +78,12 @@ onMounted(()=>{
             <Toast />
             <Form v-slot="$form" :initialValues :resolver @submit="onFormSubmit" class="p-4 sm:w-10 md:w-8 lg:w-6 h-full flex flex-column justify-content-center">
                 <div class="grid gap-3">
-
                     <div v-for="(input,index) in Inputs" :key="index" class="w-full flex flex-column gap-2">
                         <Input :form="$form" :label=input.label :name=input.name :type=input.type :placeholder=input.placeholder @input="onChange" :password=input.password />
                     </div>
                     <Message v-if="message" severity="error" size="small" variant="simple">{{ message }}</Message>
                     <div class="w-full">
-                        <Button rounded type="submit" severity="success" class="w-full font-bold">Iniciar sesión</Button>
+                        <Button :disabled="loading" rounded type="submit" severity="success" class="w-full font-bold">Iniciar sesión</Button>
                     </div>
                 </div>
                 <div class="w-full flex justify-content-center">
@@ -89,3 +92,6 @@ onMounted(()=>{
             </Form>
         </Container>
 </template>
+
+<style scoped>
+</style>

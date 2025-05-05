@@ -1,4 +1,6 @@
 import axios from 'axios';
+import store from '../store/store.js';
+
 const { VITE_APP_URL_API } = import.meta.env;
 
 const instance = axios.create({
@@ -24,19 +26,19 @@ instance.interceptors.response.use(
 );
 
 export default async function http(method, url, headers = {}, body = null, rawResponse = false, throwOnError = true) {
-  const options = {
-    method,
-    url,
-    headers: {
-      ...headers,
-    },
-  };
-
-  if (body) {
-    options.data = body;
-  }
-
   try {
+    store.dispatch('setLoading', true);
+    const options = {
+      method,
+      url,
+      headers: {
+        ...headers,
+      },
+    };
+
+    if (body) {
+      options.data = body;
+    }
     const response = await instance(options);
     console.log('RESPONSE', response);
     return response?.data;
@@ -50,5 +52,7 @@ export default async function http(method, url, headers = {}, body = null, rawRe
     } else {
       throw error;
     }
+  } finally {
+    store.dispatch('setLoading', false);
   }
 }
