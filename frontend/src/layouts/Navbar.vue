@@ -110,6 +110,10 @@ const toggle = (event) => menu.value?.toggle?.(event);
     height: 64px;
     background-color: #000;
     padding: 0 0px;
+    z-index: 9999999999;
+    position: sticky;
+    top: 0;
+    left: 0;
 }
 
 :deep(.btn-home) {

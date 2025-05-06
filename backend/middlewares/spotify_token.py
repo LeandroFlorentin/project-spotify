@@ -10,7 +10,6 @@ async def verify_spotify_token():
     token_get = get_db_token_spotify("login", session)
     if len(token_get) == 0:
         token_spotify = await get_token_spotify()
-        print("TOKEN_SPOTIFY", token_spotify)
         new_token = Token(
             token=token_spotify["access_token"],
             expires_in=datetime.now() + timedelta(seconds=token_spotify["expires_in"]),
@@ -24,7 +23,7 @@ async def verify_spotify_token():
         if expires_dt < datetime.now():
             token_spotify = await get_token_spotify()
             data = {
-                "access_token": token_spotify["access_token"],
+                "token": token_spotify["access_token"],
                 "expires_in": datetime.now()
                 + timedelta(seconds=token_spotify["expires_in"]),
             }
@@ -35,5 +34,4 @@ async def verify_spotify_token():
             token_get = token_spotify["access_token"]
         else:
             token_get = token_get[0].token
-    print("TOUKEN", token_get)
     return token_get

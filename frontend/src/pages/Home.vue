@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, computed, watch } from 'vue';
 import { useStore } from 'vuex';
+import { Card, Image, Message } from "../components"
 
 const {VITE_APP_URL_API} = import.meta.env
   
@@ -18,10 +19,19 @@ onMounted(async () => {
 
 <template>
     <div id="app" class="wrapper">
-      <div v-if="songs.tracks" class="songs-container">
+      <div v-if="songs.tracks" class="flex w-full flex-wrap justify-content-center gap-2">
         <div v-for="song in songs.tracks.items" :key="song.id" class="song-item">
-          <div class="song-name">{{ song.title }}</div>
-          <div class="song-artist">{{ song.artist[0].name }}</div>
+          <Card>
+            <template #header><Image style="cursor:pointer" :src="song.album.images[1].url" :alt="song.title"/></template>
+            <template #title>{{ song.title }}</template>
+            <template #subtitle>
+              <div class="flex">
+                <div v-for="artist in song.artist">Artistas 
+                <Message severity="success"><span class="ml-2">{{ artist.name }}</span></Message>
+              </div>
+              </div>
+            </template>
+          </Card>
         </div>
       </div>
       <div v-else>
@@ -36,7 +46,7 @@ onMounted(async () => {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: black;
     color: white;
   }
@@ -44,13 +54,7 @@ onMounted(async () => {
   .songs-container {
     width: 80%;
     max-height: 80vh;
-    overflow-y: auto;
     padding: 20px;
-  }
-
-  .song-item {
-    padding: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .song-name {
