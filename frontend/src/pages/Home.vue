@@ -1,20 +1,29 @@
 <script setup>
 import { onMounted, computed, watch } from 'vue';
 import { useStore } from 'vuex';
-import { Card, Image, Message } from "../components"
+import { Card, Image, Message, Button } from "../components"
 
 const {VITE_APP_URL_API} = import.meta.env
   
 const store = useStore();
 const songs = computed(() => store.state.songs);
 
-watch(songs, (newSongs) => {
-  console.log('Canciones actualizadas:', newSongs);
+onMounted(async () => {
+  console.log(songs.length)
+  if(!songs.length){
+    await store.dispatch('fetchSongs', { apiUrl: VITE_APP_URL_API });
+  }
 });
 
-onMounted(async () => {
-  await store.dispatch('fetchSongs', { apiUrl: VITE_APP_URL_API });
-});
+async function navigatePages(url_songs){
+  if (!url_songs) return;
+  try {
+    console.log("URL válida:", url_songs);
+    await store.dispatch('navigatePages', { url_songs: url_songs });
+  } catch (err) {
+    console.error("Error al navegar:", err);
+  }
+}
 </script>
 
 <template>
@@ -33,6 +42,8 @@ onMounted(async () => {
             </template>
           </Card>
         </div>
+        <Button @click="() => navigatePages(songs.tracks.previous)" :disabled="!songs.tracks.previous">Anterior</Button>
+        <Button @click="() => navigatePages(songs.tracks.next)" :disabled="!songs.tracks.next">Siguiente</Button>
       </div>
       <div v-else>
         No hay canciones disponibles

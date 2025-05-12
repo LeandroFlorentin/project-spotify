@@ -17,6 +17,7 @@ instance.interceptors.response.use(
     return config;
   },
   (error) => {
+    console.log('ERROR', error);
     if (error?.status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/login';

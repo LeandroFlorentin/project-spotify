@@ -26,6 +26,7 @@ async def get_token_spotify():
         )
         return response
     except HTTPException as err:
+        print("ERRUR", err)
         raise HTTPException(
             status_code=err.response.status_code, detail=err.response.text
         )

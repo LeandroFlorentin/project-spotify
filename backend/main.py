@@ -18,8 +18,3 @@ app.add_middleware(
 )
 
 app.include_router(main_router)
-
-
-@app.on_event("startup")
-def life_span():
-    create_table()

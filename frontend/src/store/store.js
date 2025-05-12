@@ -15,7 +15,7 @@ export default createStore({
     },
   },
   actions: {
-    async fetchSongs({ commit }, { query = 'Almafuerte', limit = 30, apiUrl }) {
+    async fetchSongs({ commit }, { query = 'Almafuerte', limit = 10, apiUrl }) {
       try {
         let token = localStorage.getItem('token');
         if (query === '') {
@@ -31,6 +31,17 @@ export default createStore({
     },
     setLoading({ commit }, value) {
       commit('setLoading', value);
+    },
+    async navigatePages({ commit }, { url_songs }) {
+      try {
+        let token = localStorage.getItem('token');
+        const response = await http('GET', `songs/get_songs_via_url?url_songs=${encodeURIComponent(url_songs)}`, {
+          Authorization: `Bearer ${token}`,
+        });
+        commit('setSongs', response);
+      } catch (error) {
+        throw error;
+      }
     },
   },
 });
