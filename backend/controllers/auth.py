@@ -18,7 +18,8 @@ async def login(body):
         print("RESPONSEEEE", response)
         return response
     except HTTPException as err:
-        raise HTTPException(status_code=500, detail=f"Error in authentication: {err}")
+        print("ERRORSITO", err)
+        raise err
     except KeyError as err:
         raise HTTPException(
             status_code=500, detail=f"Missing environment variable: {err}"

@@ -2,7 +2,7 @@
 import {Toast,Message} from "primevue";
 import { useRouter } from "vue-router";
 import { Form } from "@primevue/forms";
-import { reactive,ref,onUnmounted,onMounted,computed } from "vue";
+import { reactive,ref,onUnmounted,onMounted,computed, watch } from "vue";
 import { Button,Input,Container} from "../components";
 import {Inputs} from "../data/Login.js"
 import http from "../utils/http.js"
@@ -50,9 +50,9 @@ const onFormSubmit = async ({valid}) =>{
             localStorage.setItem("token",response.data.access_token)
             router.push("/home")
         } catch (error) {
-            let msg = error?.message?.split(" - ")[1]
+            let msg = JSON.parse(error.response.data.detail)
             if(msg){
-                message.value = JSON.parse(msg).message
+                message.value = msg.message
             }
             throw error;
         }

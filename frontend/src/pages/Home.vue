@@ -1,7 +1,8 @@
 <script setup>
-import { onMounted, computed, watch } from 'vue';
+import { onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
 import { Card, Image, Message, Button } from "../components"
+import { Paginator } from 'primevue';
 
 const {VITE_APP_URL_API} = import.meta.env
   
@@ -24,6 +25,10 @@ async function navigatePages(url_songs){
     console.error("Error al navegar:", err);
   }
 }
+
+async function onPage(e){
+  console.log(e)
+}
 </script>
 
 <template>
@@ -42,6 +47,7 @@ async function navigatePages(url_songs){
             </template>
           </Card>
         </div>
+        <Paginator :rows="10" :totalRecords="songs.tracks.total_pages" @page="onPage"></Paginator>
         <Button @click="() => navigatePages(songs.tracks.previous)" :disabled="!songs.tracks.previous">Anterior</Button>
         <Button @click="() => navigatePages(songs.tracks.next)" :disabled="!songs.tracks.next">Siguiente</Button>
       </div>

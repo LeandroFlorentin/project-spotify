@@ -25,6 +25,4 @@ async def auth_route(body: BodyLogin) -> Response:
             media_type="application/json",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error en la autenticación: {str(e)}"
-        )
+        raise e

@@ -14,11 +14,10 @@ async def http(
     print("Execute HTTP Request:", url, method, body, params, headers, data)
     try:
         async with httpx.AsyncClient() as client:
-            method__not_exist = method.lower() not in ["get", "post", "put", "delete"]
-            if method__not_exist:
+            if method.lower() not in ["get", "post", "put", "delete"]:
                 raise ValueError(f"Método HTTP no soportado: {method}")
+
             client_method = getattr(client, method.lower())
-            response = None
 
             if method.lower() in ["post", "put"]:
                 response = await client_method(
@@ -26,11 +25,21 @@ async def http(
                 )
             else:
                 response = await client_method(url, params=params, headers=headers)
+            print("ASD", response.status_code)
             if response.status_code >= 400:
-                raise HTTPException(
-                    status_code=response.status_code, detail=response.text
-                )
+                try:
+                    error_data = response.json()
+                    raise HTTPException(
+                        status_code=response.status_code,
+                        detail=error_data.get("message", "Error en el microservicio"),
+                    )
+                except Exception:
+                    raise HTTPException(
+                        status_code=response.status_code,
+                        detail=response.text,
+                    )
+
             return response.json()
     except httpx.HTTPError as exc:
         print(f"HTTP Exception for {exc.request.url} - {exc}")
-        raise HTTPException(500, exc)
+        raise HTTPException(status_code=500, detail=str(exc))

@@ -45,14 +45,7 @@ export default async function http(method, url, headers = {}, body = null, rawRe
     return response?.data;
   } catch (error) {
     console.error('Hubo un problema en la petición:', error.message);
-
-    if (error.response) {
-      throw new Error(`Error ${error.response.status}: ${error.response.statusText} - ${JSON.stringify(error.response.data)}`);
-    } else if (error.request) {
-      throw new Error('No se recibió respuesta del servidor');
-    } else {
-      throw error;
-    }
+    throw error;
   } finally {
     store.dispatch('setLoading', false);
   }
